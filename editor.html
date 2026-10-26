@@ -84,9 +84,14 @@ textarea{height:calc(36vh - 70px);font-family:Consolas,Menlo,monospace;font-size
 #lbar{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
 #lmsg{color:var(--mute);margin:0}
 #lgo{display:none;margin-top:16px;padding:12px 30px;font-size:1.1rem}
+#rot{display:none;position:fixed;inset:0;z-index:120;background:#0b1218;color:var(--ink);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px;font-size:1.1rem}
+#rot i{font-style:normal;font-size:56px;display:block;animation:rt 1.6s ease-in-out infinite}
+@keyframes rt{0%,30%{transform:rotate(0)}70%,100%{transform:rotate(-90deg)}}
+@media (orientation:portrait){.lw #rot{display:flex}.lw.skip #rot{display:none}}
 </style>
 </head>
 <body>
+<div id="rot"><i>📱</i><div>Pakiikot ang phone para pahalang</div><button id="rotgo" class="alt">Tuloy sa patayo</button></div>
 <div id="loading"><h1 id="ltitle"></h1><div class="bar"><i id="lbar"></i></div><p id="lmsg">Naglo-load...</p><button id="lgo">Maglaro</button></div>
 <div id="top">
 <button id="play">Play</button>
@@ -189,7 +194,7 @@ function find(n){return objs.filter(function(o){return o.userData.name===n;})[0]
 var bh=new T.BoxHelper(new T.Object3D(),0xffb703);bh.visible=false;scene.add(bh);
 var tgt=new T.Vector3(0,1,0),ry=.7,rx=.5,dist=9;
 function size(){var w=stage.clientWidth,h=stage.clientHeight;ren.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();}
-window.addEventListener('resize',size);
+window.addEventListener('resize',size);window.addEventListener('orientationchange',function(){setTimeout(size,300);});
 function say(m,bad){logEl.textContent=m;logEl.className=bad?'err':'';}
 var TEMPLATE='function Start(){\n  \n}\n\nfunction Update(dt){\n  // this = ang object na ito\n  // halimbawa: this.rotation.y += dt;\n}\n';
 var NAMES={box:'Kahon',sphere:'Bola',ground:'Sahig',light:'Ilaw',glb:'Model'};
@@ -245,6 +250,7 @@ $('add').addEventListener('change',function(){if(this.value==='moba')loadMoba();
 function mobaScript(){
 var U=[],fxs=[],stars=[],OB=[],over=false,wt=1,hero,foe,bn,rn,mark,K,FK;
 var kills=[0,0],cds=[0,0],hCd=0,sb=[],bH,bR,bA;
+var FOGN=128,FOGU=FOGN/80,fogX,exX,exC,fogTex,fogT=0;
 var BLUE=0x3a86ff,RED=0xe63946,B=24;
 // Mga lane: puntos mula sa base ng Asul (kaliwa-baba) papunta sa base ng Pula (kanan-taas)
 var LANES=[
@@ -495,13 +501,47 @@ function drawMini(c,w,h){
   c.strokeStyle='#c9b27c';c.lineWidth=4;c.lineJoin='round';
   LANES.forEach(function(l){c.beginPath();l.forEach(function(q,i){if(i)c.lineTo(X(q[0]),Y(q[1]));else c.moveTo(X(q[0]),Y(q[1]));});c.stroke();});
   U.forEach(function(u){
-    if(u.dead)return;
+    if(u.dead||!u.m.visible)return;
     var x=X(u.m.position.x),y=Y(u.m.position.z);c.fillStyle=u.team?'#ff5a5a':'#4aa3ff';
     if(u.type==='nexus')c.fillRect(x-5,y-5,10,10);
     else if(u.type==='tower')c.fillRect(x-3,y-3,6,6);
     else if(u.type==='hero'){c.beginPath();c.arc(x,y,4.5,0,6.3);c.fill();if(u===hero){c.strokeStyle='#fff';c.lineWidth=1.5;c.stroke();}}
     else c.fillRect(x-1.2,y-1.2,2.4,2.4);
   });
+}
+// Fog of war: madilim ang lugar na hindi pa napupuntahan, at nakatago ang kalaban sa labas ng paningin
+function visionR(u){return u.type==='hero'?15:u.type==='minion'?8:u.type==='tower'?13:11;}
+function initFog(){
+  var c=document.createElement('canvas');c.width=c.height=FOGN;fogX=c.getContext('2d');
+  exC=document.createElement('canvas');exC.width=exC.height=FOGN;exX=exC.getContext('2d');
+  fogTex=new THREE.CanvasTexture(c);
+  var m=Spawn('box',{x:0,y:5,z:5/Math.tan(Cam.rx),color:0xffffff,s:[80,.05,80]});
+  m.material.dispose();m.material=new THREE.MeshBasicMaterial({map:fogTex,transparent:true,depthWrite:false});m.renderOrder=20;
+}
+function updateFog(dt){
+  fogT+=dt;
+  var srcs=U.filter(function(u){return u.team===0&&!u.dead;});
+  U.forEach(function(u){
+    if(u.team!==1||u.dead)return;
+    var vis=false,p=u.m.position;
+    for(var i=0;i<srcs.length;i++){var q=srcs[i].m.position,r=visionR(srcs[i]),dx=p.x-q.x,dz=p.z-q.z;if(dx*dx+dz*dz<r*r){vis=true;break;}}
+    var st=(u.type==='tower'||u.type==='nexus');
+    if(vis&&st)u.seen=true;
+    var show=vis||(st&&u.seen);
+    u.m.visible=show;u.b.visible=show;
+  });
+  if(fogT<.05)return;fogT=0;
+  var c=fogX,W=FOGN;
+  exX.fillStyle='#fff';
+  srcs.forEach(function(u){exX.beginPath();exX.arc((u.m.position.x+40)*FOGU,(u.m.position.z+40)*FOGU,visionR(u)*FOGU*.9,0,6.3);exX.fill();});
+  c.globalCompositeOperation='source-over';c.globalAlpha=1;c.clearRect(0,0,W,W);
+  c.fillStyle='rgba(6,10,16,.93)';c.fillRect(0,0,W,W);
+  c.globalCompositeOperation='destination-out';c.globalAlpha=.55;c.drawImage(exC,0,0);c.globalAlpha=1;
+  srcs.forEach(function(u){
+    var x=(u.m.position.x+40)*FOGU,y=(u.m.position.z+40)*FOGU,r=visionR(u)*FOGU,g=c.createRadialGradient(x,y,r*.55,x,y,r);
+    g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,6.3);c.fill();
+  });
+  c.globalCompositeOperation='source-over';fogTex.needsUpdate=true;
 }
 function Start(){
   K=KITS[Game.pick]||KITS.joy;
@@ -529,6 +569,7 @@ function Start(){
   bR=UI.btn('',recall,{slot:'sp sp1',icon:'⌂',text:'Recall'});
   bH=UI.btn('',heal,{slot:'sp sp2',icon:'✚',text:'Heal'});
   UI.mini(drawMini);
+  initFog();
 }
 function Update(dt){
   if(over)return;
@@ -541,6 +582,7 @@ function Update(dt){
   U=U.filter(function(u){if(u.rm){Kill(u.m);Kill(u.b);return false;}return true;});
   updateStars(dt);
   fxs=fxs.filter(function(f){f.t-=dt;if(f.t<=0){Kill(f.m);return false;}return true;});
+  updateFog(dt);
   Cam.target.lerp(hero.m.position,.12);
   UI.score(kills[0],kills[1],Time.t);
   UI.set(hero.dead?'Patay... buhay muli sa '+Math.ceil(hero.rt)+'s':hero.rc>0?'Nagre-recall... '+hero.rc.toFixed(1)+'s':'Tower '+towers(0)+' - '+towers(1)+'   Nexus '+Math.max(0,Math.round(bn.hp))+' - '+Math.max(0,Math.round(rn.hp)));
@@ -610,6 +652,11 @@ catch(x){say('Hindi mabasa ang scene file.',true);}});e.target.value='';});
 
 // ---------- PAGPILI NG HERO ----------
 var pvr=null,pvs=null,pvcam=null,pvItems=[],pvOn=false;
+function goLandscape(){
+var el=document.documentElement,lock=function(){try{var r=screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape');if(r&&r.catch)r.catch(function(){});}catch(e){}};
+try{var f=el.requestFullscreen?el.requestFullscreen():(el.webkitRequestFullscreen?el.webkitRequestFullscreen():null);
+if(f&&f.then)f.then(lock).catch(function(){});else lock();}catch(e){lock();}
+setTimeout(size,400);setTimeout(size,1200);}
 function playGate(){if(selectList)showSelect();else startPlay();}
 function closeSelect(){pvOn=false;$('select').classList.remove('on');
 pvItems.forEach(function(it){pvs.remove(it.m);if(it.m.skeleton)it.m.skeleton.dispose();if(it.m.userData.ownMat)it.m.material.dispose();});pvItems=[];}
@@ -694,7 +741,8 @@ var steps=[['Inihahanda si Joy...',function(){modelAssets('joy');}],['Inihahanda
 if(si<steps.length){$('lmsg').textContent=steps[si][0];$('lbar').style.width=(si/steps.length*100)+'%';
 setTimeout(function(){try{steps[si][1]();}catch(e){}si++;next();},80);}
 else{$('lbar').style.width='100%';$('lmsg').textContent='Handa na!';$('lgo').style.display='inline-block';}})();
-$('lgo').addEventListener('click',function(){$('loading').classList.add('done');playGate();});
+$('lgo').addEventListener('click',function(){$('loading').classList.add('done');goLandscape();document.body.classList.add('lw');playGate();});
+$('rotgo').addEventListener('click',function(){document.body.classList.add('skip');});
 $('again').addEventListener('click',function(){if(playing)stopPlay();playGate();});}
 })();
 </script>

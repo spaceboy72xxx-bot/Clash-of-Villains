@@ -7,6 +7,8 @@ Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, tapos sirain 
 - **Skeleton** (Tank): Slam at Rage
 - **Behemoth** (Bruiser): Charge at Roar
 - **Minotaur** (Assassin): Dive at Gale
+- **Gunner** (Marksman): Cannon at Overdrive
+- **Valkyrie** (Assassin): Void at Phantom
 
 ## Mga file
 - `index.html`: ang mismong laro. May loading screen, pagpili ng hero, at walang editor.
@@ -32,10 +34,10 @@ Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, tapos sirain 
 1. Buksan ang editor at gawin ang laro. Ilagay ang pangalan ng laro sa kahon sa taas.
 2. Pindutin ang **I-export ang Laro**. Makukuha mo ang `laro.html`: may loading screen at walang editor.
 3. Palitan ang pangalan nito ng `index.html` at i-upload sa GitHub.
-4. Hindi kasama sa export ang mga na-import na GLB. Pero pwede mong gamitin sa script ang `Spawn("joy")`, `Spawn("skeleton")`, `Spawn("beast")`, at `Spawn("minotaur")`, na naka-embed na.
+4. Hindi kasama sa export ang mga na-import na GLB. Pero pwede mong gamitin sa script ang `Spawn("joy")`, `Spawn("skeleton")`, `Spawn("beast")`, `Spawn("minotaur")`, `Spawn("gunner")`, at `Spawn("valkyrie")`, na naka-embed na.
 
 ## Paalala
 - Kailangan ng internet dahil kinukuha ang Three.js mula sa CDN.
-- Mabigat ang file (mga 3 MB) dahil naka-embed ang mga 3D model at texture.
+- Mabigat ang file (mga 4 MB) dahil naka-embed ang mga 3D model at texture.
 - Auto-rig ang galaw ng mga character (hula batay sa hugis), kaya hindi ito kasing-ayos ng totoong animation.
 - Wala pang physics na kumpleto, gold, items, at multiplayer. AI lang ang kalaban.

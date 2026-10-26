@@ -13,8 +13,8 @@ Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, tapos sirain 
 - `editor.html`: ang Mini Game Editor (opsyonal), para makita at mabago ang script ng laro.
 
 ## Laruin
-- Hintaying matapos ang loading, pindutin ang **Maglaro**. Susubukan nitong gawing pahalang (landscape) ang screen. Kung hindi ito gumana sa device mo, pakiikot na lang ang phone.
-- Pumili ng hero at pindutin ang **Simulan**.
+- **Pahalang agad ang screen**: kapag patayo ang phone, nakapahalang na ang laro. Iikot mo lang ang phone sa gilid para tumayo ang larawan. Sa Android Chrome, susubukan din nitong i-lock ang screen sa pahalang kapag pinindot ang **Maglaro**. Kung gusto mong ibalik sa patayo, pindutin ang **⟳** (kanan-taas).
+- Hintaying matapos ang loading, pindutin ang **Maglaro**, pumili ng hero, at pindutin ang **Simulan**.
 - Joystick (kaliwa-baba) o tap sa lupa para maglakad.
 - Kanan-baba: malaking button ang atake, at sa paligid nito ang mga skill. Sa ilalim, **Recall** at **Heal**.
 - **Fog of war**: madilim ang lugar na hindi pa napupuntahan, at nakatago ang mga kalaban na malayo sa mga kakampi mo. Lumilinaw ang paligid habang lumalapit ka.
@@ -37,6 +37,5 @@ Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, tapos sirain 
 ## Paalala
 - Kailangan ng internet dahil kinukuha ang Three.js mula sa CDN.
 - Mabigat ang file (mga 3 MB) dahil naka-embed ang mga 3D model at texture.
-- Auto-rotate sa landscape: gumagana sa Android Chrome kapag binuksan ang laro mismo sa browser. Sa iPhone, hindi ito suportado, kaya ipapakita ang mensahe para ikot mo ang phone.
 - Auto-rig ang galaw ng mga character (hula batay sa hugis), kaya hindi ito kasing-ayos ng totoong animation.
 - Wala pang physics na kumpleto, gold, items, at multiplayer. AI lang ang kalaban.

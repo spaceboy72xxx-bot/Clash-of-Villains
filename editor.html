@@ -87,11 +87,18 @@ textarea{height:calc(36vh - 70px);font-family:Consolas,Menlo,monospace;font-size
 #rot{display:none;position:fixed;inset:0;z-index:120;background:#0b1218;color:var(--ink);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px;font-size:1.1rem}
 #rot i{font-style:normal;font-size:56px;display:block;animation:rt 1.6s ease-in-out infinite}
 @keyframes rt{0%,30%{transform:rotate(0)}70%,100%{transform:rotate(-90deg)}}
-@media (orientation:portrait){.lw #rot{display:flex}.lw.skip #rot{display:none}}
+@media (orientation:portrait){
+.lw:not(.skip){position:fixed;top:0;left:100vw;width:100vh;width:100dvh;height:100vw;transform-origin:0 0;transform:rotate(90deg);overflow:hidden}
+.lw:not(.skip) #skills .sp{bottom:28px}
+.lw:not(.skip) #skills .sp1{left:calc(50% - 56px)}
+.lw:not(.skip) #skills .sp2{left:calc(50% + 10px)}
+.lw:not(.skip) #select{gap:6px}.lw:not(.skip) .card{width:128px;padding:5px}.lw:not(.skip) .card canvas{width:84px;height:94px}.lw:not(.skip) .card small{display:none}.lw:not(.skip) #select h2{font-size:1rem}
+}
+#rotbtn{display:none;position:absolute;right:66px;top:8px;z-index:3;background:var(--bg);color:var(--ink);border:1px solid var(--line);padding:8px 12px}
+.game #rotbtn{display:block}
 </style>
 </head>
 <body>
-<div id="rot"><i>📱</i><div>Pakiikot ang phone para pahalang</div><button id="rotgo" class="alt">Tuloy sa patayo</button></div>
 <div id="loading"><h1 id="ltitle"></h1><div class="bar"><i id="lbar"></i></div><p id="lmsg">Naglo-load...</p><button id="lgo">Maglaro</button></div>
 <div id="top">
 <button id="play">Play</button>
@@ -103,7 +110,7 @@ textarea{height:calc(36vh - 70px);font-family:Consolas,Menlo,monospace;font-size
 <label class="file alt" style="background:var(--bg);color:var(--ink);border:1px solid var(--line)">I-load<input id="load" type="file" accept=".json,application/json"></label>
 </div>
 <div id="stage"><div id="log">I-tap ang object para piliin. I-drag para umikot, pinch para mag-zoom.</div>
-<div id="hudtxt"></div><button id="again">Ulit</button><div id="skills"></div><div id="stick"><div id="knob"></div></div>
+<div id="hudtxt"></div><button id="again">Ulit</button><button id="rotbtn" title="Ikot ng screen">⟳</button><div id="skills"></div><div id="stick"><div id="knob"></div></div>
 <div id="score"><span id="sc-b">0</span><span id="sc-t">00:00</span><span id="sc-r">0</span></div><canvas id="mini" width="96" height="96"></canvas>
 <div id="select"><h2>Pumili ng Hero</h2><div id="cards"></div><button id="selgo" disabled>Simulan</button></div>
 <div id="pad"><div class="g"><button class="u" data-k="ArrowUp">▲</button><button data-k="ArrowLeft" style="grid-row:2;grid-column:1">◀</button><button data-k="ArrowDown" style="grid-row:2;grid-column:2">▼</button><button data-k="ArrowRight" style="grid-row:2;grid-column:3">▶</button></div><div class="g" style="grid-template-columns:70px;grid-template-rows:70px"><button data-k="Space">Talon</button></div></div></div>
@@ -629,7 +636,7 @@ b.addEventListener('pointerdown',function(e){e.preventDefault();keys[k]=true;});
 ['pointerup','pointerleave','pointercancel'].forEach(function(ev){b.addEventListener(ev,function(){keys[k]=false;});});});
 
 (function(){var st=$('stick'),kn=$('knob'),act=null,R=44;
-function mv(e){var r=st.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),l=Math.sqrt(dx*dx+dy*dy)||1,k=Math.min(l,R)/l;dx*=k;dy*=k;kn.style.transform='translate('+dx+'px,'+dy+'px)';Input.stick.x=dx/R;Input.stick.z=dy/R;}
+function mv(e){var r=st.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);if(rotated()){var t0=dx;dx=dy;dy=-t0;}var l=Math.sqrt(dx*dx+dy*dy)||1,k=Math.min(l,R)/l;dx*=k;dy*=k;kn.style.transform='translate('+dx+'px,'+dy+'px)';Input.stick.x=dx/R;Input.stick.z=dy/R;}
 st.addEventListener('pointerdown',function(e){e.preventDefault();act=e.pointerId;st.setPointerCapture(e.pointerId);mv(e);});
 st.addEventListener('pointermove',function(e){if(e.pointerId===act)mv(e);});
 function end(e){if(e.pointerId!==act)return;act=null;kn.style.transform='';Input.stick.x=Input.stick.z=0;}
@@ -652,6 +659,7 @@ catch(x){say('Hindi mabasa ang scene file.',true);}});e.target.value='';});
 
 // ---------- PAGPILI NG HERO ----------
 var pvr=null,pvs=null,pvcam=null,pvItems=[],pvOn=false;
+function rotated(){return document.body.classList.contains('lw')&&!document.body.classList.contains('skip')&&window.matchMedia('(orientation:portrait)').matches;}
 function goLandscape(){
 var el=document.documentElement,lock=function(){try{var r=screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape');if(r&&r.catch)r.catch(function(){});}catch(e){}};
 try{var f=el.requestFullscreen?el.requestFullscreen():(el.webkitRequestFullscreen?el.webkitRequestFullscreen():null);
@@ -718,7 +726,8 @@ pts[e.pointerId]=[e.clientX,e.clientY];
 if(ids.length===2){var a=pts[ids[0]],b=pts[ids[1]],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(last)zoom(last/d);last=d;}});
 cv.addEventListener('pointerup',function(e){if(pts[e.pointerId]&&moved<6&&Object.keys(pts).length===1){if(playing)tapGround(e);else pick(e);}delete pts[e.pointerId];last=0;});
 cv.addEventListener('wheel',function(e){e.preventDefault();zoom(1+e.deltaY*.001);},{passive:false});
-function tapGround(e){var r=cv.getBoundingClientRect();ray.setFromCamera(new T.Vector2((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1),cam);
+function tapGround(e){var nx,ny;if(rotated()){nx=e.clientY/stage.clientWidth*2-1;ny=-((window.innerWidth-e.clientX)/stage.clientHeight)*2+1;}else{var r=cv.getBoundingClientRect();nx=(e.clientX-r.left)/r.width*2-1;ny=-((e.clientY-r.top)/r.height)*2+1;}
+ray.setFromCamera(new T.Vector2(nx,ny),cam);
 var p=new T.Vector3();if(ray.ray.intersectPlane(new T.Plane(new T.Vector3(0,1,0),0),p))Input.tap={x:p.x,z:p.z};}
 function pick(e){var r=cv.getBoundingClientRect();ray.setFromCamera(new T.Vector2((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1),cam);
 var hits=ray.intersectObjects(objs,true);for(var i=0;i<hits.length;i++){var o=hits[i].object;while(o&&objs.indexOf(o)<0)o=o.parent;if(o){select(o);return;}}select(null);}
@@ -735,14 +744,14 @@ make('light',{name:'Ilaw',p:[2,4,2],intensity:.6});
 make('box',{name:'Manlalaro',p:[0,.5,0],script:'var speed = 3;\n\nfunction Update(dt){\n  if (Input.key("ArrowLeft"))  this.position.x -= speed * dt;\n  if (Input.key("ArrowRight")) this.position.x += speed * dt;\n  if (Input.key("ArrowUp"))    this.position.z -= speed * dt;\n  if (Input.key("ArrowDown"))  this.position.z += speed * dt;\n  this.rotation.y += dt;\n}\n'});
 size();loop();
 if(GM){
-document.body.className='game';$('ltitle').textContent=document.title;
+document.body.className='game';document.body.classList.add('lw');$('ltitle').textContent=document.title;
 var steps=[['Inihahanda si Joy...',function(){modelAssets('joy');}],['Inihahanda ang mga skeleton...',function(){modelAssets('skel');}],['Inihahanda ang mga halimaw...',function(){modelAssets('beast');modelAssets('mino');}],['Binubuo ang mapa...',function(){loadScene(JSON.parse($('gamedata').textContent));}]],si=0;
 (function next(){
 if(si<steps.length){$('lmsg').textContent=steps[si][0];$('lbar').style.width=(si/steps.length*100)+'%';
 setTimeout(function(){try{steps[si][1]();}catch(e){}si++;next();},80);}
 else{$('lbar').style.width='100%';$('lmsg').textContent='Handa na!';$('lgo').style.display='inline-block';}})();
 $('lgo').addEventListener('click',function(){$('loading').classList.add('done');goLandscape();document.body.classList.add('lw');playGate();});
-$('rotgo').addEventListener('click',function(){document.body.classList.add('skip');});
+$('rotbtn').addEventListener('click',function(){document.body.classList.toggle('skip');setTimeout(size,100);});
 $('again').addEventListener('click',function(){if(playing)stopPlay();playGate();});}
 })();
 </script>

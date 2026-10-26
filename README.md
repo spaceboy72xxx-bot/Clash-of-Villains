@@ -10,8 +10,13 @@ Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, bumili ng ite
 - **Gunner** (Marksman): Cannon at Overdrive
 - **Valkyrie** (Assassin): Void at Phantom
 
-## Gold at mga item
-- Magsisimula ka sa $300. Dagdag na gold: +3 bawat segundo, +30 sa bawat kawal na mapatay, +150 sa tower, at +300 sa hero.
+## Mana, level, at gold
+- **Mana**: gumagamit ng mana ang bawat skill (15 hanggang 30). Bumabalik ang mana ng **1 bawat segundo**, kaya piliin nang mabuti ang mga skill. Nagsisimula sa 60 mana at tumataas ng 10 sa bawat level.
+- **Level at XP**: hanggang **level 20**. Tumataas ang kailangang XP sa bawat level. Nakakakuha ka ng XP sa mga napatay na kalaban malapit sa iyo (kawal 25, tower 150, hero 200) at 1.5 bawat segundo. Sa bawat level, lumalakas ang HP, atake, at magic, at gumagaling ka nang kaunti.
+- **Icon ng hero** (kaliwa-taas, sa ilalim ng minimap): may level, HP bar, mana bar, at XP bar.
+- **Gold**: magsisimula ka sa $300. Dagdag na gold: +1 bawat segundo, +20 sa bawat kawal na mapatay, +150 sa tower, at +150 sa hero.
+
+## Mga item
 - Pindutin ang **Shop** (kanan-taas, sa tabi ng gold) para bumili. 6 na slot ang pwede, at isang beses lang kada item.
 - May bilog na button sa gitna-baba para sa bawat item na may Active. Makikita sa kanan-taas ang listahan ng mga hawak mo.
 - Mga item: Shadow Step Boots, Serpent Coil (Token), Serpent Coil (Orb), Crimson Heart, Curse Grimoire, Clockwork Spider, Lunar Aegis, Abyssal Trident, Phoenix Ash, Frostbitten Gauntlet, Windreaver Bow, Storm Caller's Staff, at Krristan Heart.

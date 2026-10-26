@@ -1,6 +1,6 @@
 # MOBA ni Joy
 
-Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, tapos sirain ang mga tower at ang Nexus ng Pula.
+Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, bumili ng item, tapos sirain ang mga tower at ang Nexus ng Pula.
 
 ## Mga hero
 - **Joy** (Mage): Kidlat at Starfall
@@ -10,16 +10,22 @@ Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, tapos sirain 
 - **Gunner** (Marksman): Cannon at Overdrive
 - **Valkyrie** (Assassin): Void at Phantom
 
+## Gold at mga item
+- Magsisimula ka sa $300. Dagdag na gold: +3 bawat segundo, +30 sa bawat kawal na mapatay, +150 sa tower, at +300 sa hero.
+- Pindutin ang **Shop** (kanan-taas, sa tabi ng gold) para bumili. 6 na slot ang pwede, at isang beses lang kada item.
+- May bilog na button sa gitna-baba para sa bawat item na may Active. Makikita sa kanan-taas ang listahan ng mga hawak mo.
+- Mga item: Shadow Step Boots, Serpent Coil (Token), Serpent Coil (Orb), Crimson Heart, Curse Grimoire, Clockwork Spider, Lunar Aegis, Abyssal Trident, Phoenix Ash, Frostbitten Gauntlet, Windreaver Bow, Storm Caller's Staff, at Krristan Heart.
+
 ## Mga file
 - `index.html`: ang mismong laro. May loading screen, pagpili ng hero, at walang editor.
-- `editor.html`: ang Mini Game Editor (opsyonal), para makita at mabago ang script ng laro.
+- `editor.html`: ang Mini Game Editor (opsyonal), para makita at mabago ang script ng laro (kasama ang listahan ng `ITEMS`).
 
 ## Laruin
 - **Pahalang agad ang screen**: kapag patayo ang phone, nakapahalang na ang laro. Iikot mo lang ang phone sa gilid para tumayo ang larawan. Sa Android Chrome, susubukan din nitong i-lock ang screen sa pahalang kapag pinindot ang **Maglaro**. Kung gusto mong ibalik sa patayo, pindutin ang **⟳** (kanan-taas).
 - Hintaying matapos ang loading, pindutin ang **Maglaro**, pumili ng hero, at pindutin ang **Simulan**.
 - Joystick (kaliwa-baba) o tap sa lupa para maglakad.
 - Kanan-baba: malaking button ang atake, at sa paligid nito ang mga skill. Sa ilalim, **Recall** at **Heal**.
-- **Fog of war**: madilim ang lugar na hindi pa napupuntahan, at nakatago ang mga kalaban na malayo sa mga kakampi mo. Lumilinaw ang paligid habang lumalapit ka.
+- **Fog of war**: madilim ang lugar na hindi pa napupuntahan, at nakatago ang mga kalaban na malayo sa mga kakampi mo.
 - May banggaan ang mga puno, tower, Nexus, at mga unit.
 - Pindutin ang **Ulit** (kanan-taas) para bumalik sa pagpili ng hero.
 - Pinch (o scroll) para mag-zoom ng camera.
@@ -40,4 +46,5 @@ Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, tapos sirain 
 - Kailangan ng internet dahil kinukuha ang Three.js mula sa CDN.
 - Mabigat ang file (mga 4 MB) dahil naka-embed ang mga 3D model at texture.
 - Auto-rig ang galaw ng mga character (hula batay sa hugis), kaya hindi ito kasing-ayos ng totoong animation.
-- Wala pang physics na kumpleto, gold, items, at multiplayer. AI lang ang kalaban.
+- **Bumabagal ang laro?** Awtomatikong ibinababa ng laro ang linaw ng larawan kapag mabagal ang phone, at itinataas ulit kapag gumaan.
+- Wala pang physics na kumpleto at multiplayer. AI lang ang kalaban.

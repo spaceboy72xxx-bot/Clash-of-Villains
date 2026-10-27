@@ -60,7 +60,7 @@ textarea{height:calc(36vh - 70px);font-family:Consolas,Menlo,monospace;font-size
 #score{display:none;position:absolute;top:6px;left:50%;transform:translateX(-50%);align-items:stretch;border-radius:8px;overflow:hidden;font-weight:800;font-size:15px;box-shadow:0 2px 8px #0008;pointer-events:none;z-index:2}
 #score span{padding:3px 12px;min-width:34px;text-align:center}
 #sc-b{background:#1e63d6}#sc-t{background:#0b1220cc;font-weight:600;font-size:13px;display:flex;align-items:center}#sc-r{background:#c92a2a}
-#mini{display:none;position:absolute;left:8px;top:8px;width:96px;height:96px;border:2px solid #7fb8ff;border-radius:8px;background:#0b1a22cc;pointer-events:none;z-index:2}
+#mini{display:none;position:absolute;left:8px;top:8px;width:124px;height:124px;border:2px solid #7fb8ff;border-radius:8px;background:#0b1a22cc;pointer-events:none;z-index:2}
 #select{display:none;position:absolute;inset:0;z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;background:radial-gradient(circle at 50% 30%,#2a4358f2,#0b1218f7);text-align:center;overflow:auto}
 #select.on{display:flex}
 #select h2{margin:0;font-size:1.3rem}
@@ -166,7 +166,7 @@ textarea{height:calc(36vh - 70px);font-family:Consolas,Menlo,monospace;font-size
 </div>
 <div id="stage"><div id="log">I-tap ang object para piliin. I-drag para umikot, pinch para mag-zoom.</div>
 <div id="hudtxt"></div><button id="again">Ulit</button><button id="rotbtn" title="Ikot ng screen">⟳</button><div id="skills"></div><div id="stick"><div id="knob"></div></div>
-<div id="score"><span id="sc-b">0</span><span id="sc-t">00:00</span><span id="sc-r">0</span></div><canvas id="mini" width="96" height="96"></canvas>
+<div id="score"><span id="sc-b">0</span><span id="sc-t">00:00</span><span id="sc-r">0</span></div><canvas id="mini" width="124" height="124"></canvas>
 <div id="dota"><div id="hpic"><img id="hpimg" alt=""><b id="hplv">1</b></div><div class="col"><div id="dspells"></div><div id="hpbars"><i class="bar hp"><u id="bhp"></u><span id="thp"></span></i><i class="bar mp"><u id="bmp"></u><span id="tmp"></span></i><i class="bar xp"><u id="bxp"></u></i></div></div><div id="dslots"></div></div>
 <div id="goldbar"><span id="gold">$ 300</span><button id="shopbtn">Shop</button></div><div id="islots"></div><div id="iact"></div><div id="toast"></div>
 <div id="shop"><div id="shophead"><h3>Tindahan</h3><span id="shopgold"></span><button id="shopx" class="alt">Isara</button></div><div id="shopbody"></div></div>
@@ -352,9 +352,9 @@ function mobaScript(){
 var U=[],fxs=[],stars=[],OB=[],over=false,wt=1,hero,foe,bn,rn,mark,K,FK;
 var kills=[0,0],cds=[0,0],hCd=0,sb=[],bH,bR,bA;
 var gold=0,owned=[],icd={},iBtn={},cdrV=0,pet=null,petT=0,zones=[],tp=0,aur=0;
-var lvl=1,xp=0,mana=60,MAXL=20;
-var FOGN=128,FOGU=FOGN/80,fogX,exX,exC,fogTex,fogT=0;
-var BLUE=0x3a86ff,RED=0xe63946,B=24;
+var lvl=1,xp=0,mana=60,MAXL=20,respawn=[];
+var FOGN=256,FOGH=56,FOGU=FOGN/(2*FOGH),fogX,exX,exC,fogTex,fogT=0;
+var BLUE=0x3a86ff,RED=0xe63946,B=36;
 // Mga lane: puntos mula sa base ng Asul (kaliwa-baba) papunta sa base ng Pula (kanan-taas)
 var LANES=[
   [[-B,B],[-B,-B],[B,-B]],   // taas
@@ -387,14 +387,15 @@ var TYPES={
   minion:{hp:150,atk:12,rng:2.5,spd:3,cd:1,aggro:6,s:[1.8,1.8,1.8],k:'skeletonlow',tint:[0x9cc2ff,0xff9c9c],r:.6},
   tower:{hp:900,atk:45,rng:8,spd:0,cd:1.2,aggro:8,s:[1.6,4,1.6],k:'cyl',r:1.3},
   nexus:{hp:2000,atk:0,rng:0,spd:0,cd:1,aggro:0,s:[4,3,4],k:'box',r:2.9},
-  pet:{hp:220,atk:16,rng:2.2,spd:7,cd:.7,aggro:9,s:[1.1,.7,1.1],k:'sphere',tint:[0xc9a24a,0xc9a24a],r:.5}
+  pet:{hp:220,atk:16,rng:2.2,spd:7,cd:.7,aggro:9,s:[1.1,.7,1.1],k:'sphere',tint:[0xc9a24a,0xc9a24a],r:.5},
+  neut:{hp:260,atk:16,rng:2.4,spd:4,cd:1,aggro:6,s:[1.4,1.4,1.4],k:'sphere',tint:[0xa070ff,0xa070ff,0xa070ff],r:.7}
 };
 function unit(team,type,x,z,kit){
   var d=TYPES[type];
   if(kit)d=Object.assign({},d,{k:kit.kind,s:[kit.s,kit.s,kit.s],hp:kit.hp,atk:kit.atk,rng:kit.rng,spd:kit.spd,r:kit.r,tint:kit.tint});
-  var m=Spawn(d.k,{x:x,y:d.s[1]/2,z:z,color:d.tint?d.tint[team]:(team?RED:BLUE),s:d.s});
+  var m=Spawn(d.k,{x:x,y:d.s[1]/2,z:z,color:d.tint?(d.tint[team]===0xffffff?0xfefefe:d.tint[team]):(team?RED:BLUE),s:d.s});
   var b=Spawn('box',{x:x,y:d.s[1]+.8,z:z,color:0x2ecc71,s:[2,.2,.2]});
-  var u={m:m,b:b,team:team,type:type,hp:d.hp,max:d.hp,atk:d.atk,rng:d.rng,spd:d.spd,cd:d.cd,aggro:d.aggro,h:d.s[1],r:d.r,t:0,q:0,rt:0,rc:0,lhp:d.hp,rage:0,dead:false,rm:false,sx:x,sz:z,go:null,path:null,wi:1,off:0,at:9,ct:9,ph:Math.random()*6,slow:0,mark:0,evade:0,stat:0,statT:0,cmb:0,rel:0,relT:0,am:1,apm:1,asm:1,msm:1,ls:0,dr:0,stk:0,bt:0,sd:0,still:0,ghost:false,gT:0,pet:type==='pet'};
+  var u={m:m,b:b,team:team,type:type,hp:d.hp,max:d.hp,atk:d.atk,rng:d.rng,spd:d.spd,cd:d.cd,aggro:d.aggro,h:d.s[1],r:d.r,t:0,q:0,rt:0,rc:0,lhp:d.hp,rage:0,dead:false,rm:false,sx:x,sz:z,go:null,path:null,wi:1,off:0,at:9,ct:9,ph:Math.random()*6,slow:0,mark:0,evade:0,stat:0,statT:0,cmb:0,rel:0,relT:0,am:1,apm:1,asm:1,msm:1,ls:0,dr:0,stk:0,bt:0,sd:0,still:0,ghost:false,gT:0,pet:type==='pet',neut:type==='neut',grass:-1,rev:0,_hid:false};
   if(type==='tower'||type==='nexus'){u.ob={x:x,z:z,r:d.r};OB.push(u.ob);}
   U.push(u);return u;
 }
@@ -414,24 +415,25 @@ function distToLane(x,z){
   return best;
 }
 // Mga puno: may banggaan na ang bawat isa
-function trees(){
-  var seed=7,items=[];function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
-  var n=0,tries=0;
-  while(n<70&&tries<800){
-    tries++;
-    var x=(rnd()*2-1)*(B+6),z=(rnd()*2-1)*(B+6);
-    if(distToLane(x,z)<5.5)continue;
-    if(Math.hypot(x+B,z-B)<9||Math.hypot(x-B,z+B)<9)continue;
-    var h=2+rnd()*1.6;
-    items.push({k:'cyl',x:x,y:h*.25,z:z,color:0x6b4a2b,s:[.5,h*.5,.5]});
-    items.push({k:'cone',x:x,y:h*.5+h*.45,z:z,color:rnd()>.5?0x2f7d3a:0x256b33,s:[h*.8,h*.9,h*.8]});
-    OB.push({x:x,z:z,r:.65});
-    n++;
-  }
+// Mga damo: makakapagtago ka rito. Makikita ka lang ng kalaban kung nasa parehong damo rin siya (o kung kakaatake mo lang).
+var GRASS=[[-26,22],[-12,26],[-30,8],[-14,8],[-3,10],[8,30],[-22,-6],[-9,-1]].map(function(a){return {x:a[0],z:a[1],r:5.2};});
+GRASS=GRASS.concat(GRASS.map(function(g){return {x:-g.x,z:-g.z,r:g.r};}));
+function grassAt(x,z){for(var i=0;i<GRASS.length;i++){var g=GRASS[i],dx=x-g.x,dz=z-g.z;if(dx*dx+dz*dz<g.r*g.r)return i;}return -1;}
+// Mga jungle camp (hango sa mapa ng Dota)
+var CAMPS=[[-15.7,-25],[-23.7,-19.3],[-.6,-20.2],[7.4,-17.6],[-7.7,-13.5],[-16,-.8],[24.6,13],[-1.6,18.4],[-4.4,24.5],[9.4,20.6],[17.5,18.9],[17.1,26.3]];
+function camps(){CAMPS.forEach(function(c){unit(2,'neut',c[0]-1.5,c[1]-1);unit(2,'neut',c[0]+1.5,c[1]+1);});}
+function grass(){
+  var items=[],seed=11;function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
+  GRASS.forEach(function(g){
+    items.push({k:'cyl',x:g.x,y:.025,z:g.z,color:0x2f8a3a,s:[g.r*2,.04,g.r*2]});
+    for(var i=0;i<14;i++){var a=rnd()*6.283,d=Math.sqrt(rnd())*(g.r-.4),h=.7+rnd()*.6;
+      items.push({k:'cone',x:g.x+Math.cos(a)*d,y:h/2,z:g.z+Math.sin(a)*d,color:rnd()>.5?0x1f7a2c:0x2e9a3a,s:[.55,h,.55]});}
+  });
+  CAMPS.forEach(function(c){items.push({k:'cyl',x:c[0],y:.02,z:c[1],color:0xa89560,s:[7,.03,7]});});
   Batch(items);
 }
 function dist(a,b){var dx=a.m.position.x-b.m.position.x,dz=a.m.position.z-b.m.position.z;return Math.sqrt(dx*dx+dz*dz);}
-function nearest(u,range){var best=null,bd=range;U.forEach(function(e){if(e.team===u.team||e.dead)return;var d=dist(u,e);if(d<bd){bd=d;best=e;}});return best;}
+function nearest(u,range){var best=null,bd=range;U.forEach(function(e){if(e.team===u.team||e.dead)return;if(e.grass>=0&&e.rev<=0&&u.grass!==e.grass)return;var d=dist(u,e);if(d<bd){bd=d;best=e;}});return best;}
 function step(u,x,z,dt,stop){var p=u.m.position,dx=x-p.x,dz=z-p.z,d=Math.sqrt(dx*dx+dz*dz);if(d<=stop+.05)return false;var s=Math.min(u.spd*(u.msm||1)*(u.slow>0?.5:1)*dt,d-stop);p.x+=dx/d*s;p.z+=dz/d*s;u.m.rotation.y=Math.atan2(dx,dz);return true;}
 // Banggaan: itinutulak palabas ng mga puno, tower, nexus, at hangganan ng mapa
 function collide(u){
@@ -440,7 +442,7 @@ function collide(u){
     var o=OB[i],dx=p.x-o.x,dz=p.z-o.z,d2=dx*dx+dz*dz,m=r+o.r;
     if(d2<m*m){var d=Math.sqrt(d2)||.001,k=(m-d)/d;p.x+=dx*k;p.z+=dz*k;}
   }
-  var L=B+8;p.x=Math.max(-L,Math.min(L,p.x));p.z=Math.max(-L,Math.min(L,p.z));
+  var L=B+14;p.x=Math.max(-L,Math.min(L,p.x));p.z=Math.max(-L,Math.min(L,p.z));
 }
 // Banggaan ng mga unit sa isa't isa
 function separate(){
@@ -466,6 +468,7 @@ function hurt(u,n){
 function die(u){
   u.dead=true;u.m.visible=false;u.b.visible=false;u.go=null;
   if(u.team===1){gold+=(u.type==='hero'?150:u.type==='tower'?150:u.type==='minion'?20:0);if(!hero.dead&&dist(hero,u)<=25)addXp(u.type==='hero'?200:u.type==='tower'?150:u.type==='minion'?25:0);}
+  if(u.team===2){if(!hero.dead&&dist(hero,u)<=25){gold+=25;addXp(30);}respawn.push({t:60,x:u.sx,z:u.sz});}
   if(u.type==='tower'&&u.ob){var i=OB.indexOf(u.ob);if(i>=0)OB.splice(i,1);}
   if(u.type==='hero'){u.rt=8;kills[u.team?0:1]++;}
   else if(u.type==='nexus'){over=true;UI.set(u.team?'PANALO ang Asul!':'TALO ang Asul...');}
@@ -473,11 +476,11 @@ function die(u){
 }
 function ring(x,z,r,c){var m=Spawn('cyl',{x:x,y:.1,z:z,color:c||0xffee00,s:[r*2,.08,r*2]});fxs.push({m:m,t:.3});}
 function burst(u,r,n){
-  u.ct=0;ring(u.m.position.x,u.m.position.z,r);
+  u.ct=0;u.rev=1.5;ring(u.m.position.x,u.m.position.z,r);
   U.forEach(function(e){if(e.team!==u.team&&!e.dead&&dist(u,e)<=r)hurt(e,n*(u===hero?hero.apm:1));});
 }
 function doAttack(u,tg){
-  var mult=u.rage>0?2:1;
+  u.rev=1.5;var mult=u.rage>0?2:1;
   u.t=u.cd/mult/u.asm;u.at=0;
   u.m.rotation.y=Math.atan2(tg.m.position.x-u.m.position.x,tg.m.position.z-u.m.position.z);
   var dmg=u.atk*mult*u.am*(1+.02*u.rel);
@@ -707,7 +710,7 @@ function cast(i){
   var sk=K.skills[i];
   if(mana<sk.mp){UI.toast('Kulang ang mana');return;}
   if(sk.fn()===false)return;
-  hero.cmb=6;hero.ghost=false;
+  hero.cmb=6;hero.ghost=false;hero.rev=1.5;
   mana-=sk.mp;cds[i]=sk.cd*(1-cdrV);
 }
 function attackBtn(){
@@ -746,11 +749,19 @@ function think(u,dt){
     return;
   }
   u.t-=dt;u.q-=dt;u.rage=Math.max(0,u.rage-dt);var ox=p.x,oz=p.z;
-  if(u.slow>0)u.slow-=dt;if(u.mark>0)u.mark-=dt;if(u.evade>0)u.evade-=dt;if(u.cmb>0)u.cmb-=dt;
+  if(u.slow>0)u.slow-=dt;if(u.mark>0)u.mark-=dt;if(u.evade>0)u.evade-=dt;if(u.cmb>0)u.cmb-=dt;if(u.rev>0)u.rev-=dt;
   if(u.stat>0&&(u.statT-=dt)<=0)u.stat=0;if(u.relT>0&&(u.relT-=dt)<=0)u.rel=0;
+  if(u.spd>0)u.grass=grassAt(p.x,p.z);
+  if(u===hero){var hid=u.grass>=0&&u.rev<=0;if(u._hid!==hid){u._hid=hid;if(u.m.material){u.m.material.transparent=true;u.m.material.opacity=hid?.45:1;}}}
   u.b.position.set(p.x,u.h+.8,p.z);if(u.team===0)u.b.visible=(u.hp<u.max||u.type!=='minion');
   var r=Math.max(0,u.hp/u.max);u.b.scale.x=2*r+.001;u.b.material.color.setHex(r>.5?0x2ecc71:r>.25?0xf1c40f:0xe74c3c);
   if(u.type==='nexus')return;
+  if(u.neut){
+    var d0=Math.hypot(p.x-u.sx,p.z-u.sz),tgn=d0<10?nearest(u,u.aggro):null;
+    if(tgn){if(dist(u,tgn)<=u.rng+tgn.m.scale.x/2){if(u.t<=0)doAttack(u,tgn);}else step(u,tgn.m.position.x,tgn.m.position.z,dt,0);}
+    else if(d0>.5){step(u,u.sx,u.sz,dt,0);u.hp=Math.min(u.max,u.hp+u.max*.2*dt);}
+    collide(u);return;
+  }
   if(u.pet){
     var tg2=nearest(u,u.aggro),dh=dist(u,hero);
     if(tg2&&dh<14){if(dist(u,tg2)<=u.rng+tg2.m.scale.x/2){if(u.t<=0)doAttack(u,tg2);}else step(u,tg2.m.position.x,tg2.m.position.z,dt,0);}
@@ -791,12 +802,17 @@ function think(u,dt){
   pose(u,dt,ox,oz);
 }
 function drawMini(c,w,h){
-  var k=(w-10)/(2*(B+6)),X=function(x){return w/2+x*k;},Y=function(z){return h/2+z*k;};
-  c.strokeStyle='#c9b27c';c.lineWidth=4;c.lineJoin='round';
+  var S=B+8,k=(w-6)/(2*S),X=function(x){return w/2+x*k;},Y=function(z){return h/2+z*k;};
+  c.fillStyle='#5a9a4a';c.fillRect(0,0,w,h);
+  c.strokeStyle='#3b83c4';c.lineWidth=Math.max(4,8*k);c.beginPath();c.moveTo(X(-S),Y(-S));c.lineTo(X(S),Y(S));c.stroke();
+  c.fillStyle='#2f7a35';GRASS.forEach(function(g){c.beginPath();c.arc(X(g.x),Y(g.z),g.r*k,0,6.3);c.fill();});
+  c.strokeStyle='#d6c08a';c.lineWidth=Math.max(3,5*k);c.lineJoin='round';
   LANES.forEach(function(l){c.beginPath();l.forEach(function(q,i){if(i)c.lineTo(X(q[0]),Y(q[1]));else c.moveTo(X(q[0]),Y(q[1]));});c.stroke();});
   U.forEach(function(u){
     if(u.dead||!u.m.visible)return;
-    var x=X(u.m.position.x),y=Y(u.m.position.z);c.fillStyle=u.team?'#ff5a5a':'#4aa3ff';
+    var x=X(u.m.position.x),y=Y(u.m.position.z);
+    if(u.team===2){c.fillStyle='#e6cf4f';c.beginPath();c.moveTo(x,y-3.5);c.lineTo(x-3,y+2.5);c.lineTo(x+3,y+2.5);c.fill();return;}
+    c.fillStyle=u.team?'#ff5a5a':'#4aa3ff';
     if(u.type==='nexus')c.fillRect(x-5,y-5,10,10);
     else if(u.type==='tower')c.fillRect(x-3,y-3,6,6);
     else if(u.type==='hero'){c.beginPath();c.arc(x,y,4.5,0,6.3);c.fill();if(u===hero){c.strokeStyle='#fff';c.lineWidth=1.5;c.stroke();}}
@@ -809,30 +825,31 @@ function initFog(){
   var c=document.createElement('canvas');c.width=c.height=FOGN;fogX=c.getContext('2d');
   exC=document.createElement('canvas');exC.width=exC.height=FOGN;exX=exC.getContext('2d');
   fogTex=new THREE.CanvasTexture(c);
-  var m=Spawn('box',{x:0,y:5,z:5/Math.tan(Cam.rx),color:0xffffff,s:[80,.05,80]});
+  var m=Spawn('box',{x:0,y:5,z:5/Math.tan(Cam.rx),color:0xffffff,s:[2*FOGH,.05,2*FOGH]});
   m.material.dispose();m.material=new THREE.MeshBasicMaterial({map:fogTex,transparent:true,depthWrite:false});m.renderOrder=20;
 }
 function updateFog(dt){
   fogT+=dt;
   var srcs=U.filter(function(u){return u.team===0&&!u.dead;});
   U.forEach(function(u){
-    if(u.team!==1||u.dead)return;
+    if(u.team===0||u.dead)return;
     var vis=false,p=u.m.position;
     for(var i=0;i<srcs.length;i++){var q=srcs[i].m.position,r=visionR(srcs[i]),dx=p.x-q.x,dz=p.z-q.z;if(dx*dx+dz*dz<r*r){vis=true;break;}}
+    if(vis&&u.grass>=0&&u.rev<=0){var sg=false;for(var j=0;j<srcs.length;j++)if(srcs[j].grass===u.grass){sg=true;break;}if(!sg)vis=false;}
     var st=(u.type==='tower'||u.type==='nexus');
     if(vis&&st)u.seen=true;
     var show=vis||(st&&u.seen);
-    u.m.visible=show;u.b.visible=show&&(u.hp<u.max||u.type!=='minion');
+    u.m.visible=show;u.b.visible=show&&(u.hp<u.max||(u.type!=='minion'&&u.type!=='neut'));
   });
   if(fogT<.1)return;fogT=0;
   var c=fogX,W=FOGN;
   exX.fillStyle='#fff';
-  srcs.forEach(function(u){exX.beginPath();exX.arc((u.m.position.x+40)*FOGU,(u.m.position.z+40)*FOGU,visionR(u)*FOGU*.9,0,6.3);exX.fill();});
+  srcs.forEach(function(u){exX.beginPath();exX.arc((u.m.position.x+FOGH)*FOGU,(u.m.position.z+FOGH)*FOGU,visionR(u)*FOGU*.9,0,6.3);exX.fill();});
   c.globalCompositeOperation='source-over';c.globalAlpha=1;c.clearRect(0,0,W,W);
   c.fillStyle='rgba(6,10,16,.93)';c.fillRect(0,0,W,W);
   c.globalCompositeOperation='destination-out';c.globalAlpha=.55;c.drawImage(exC,0,0);c.globalAlpha=1;
   srcs.forEach(function(u){
-    var x=(u.m.position.x+40)*FOGU,y=(u.m.position.z+40)*FOGU,r=visionR(u)*FOGU,g=c.createRadialGradient(x,y,r*.55,x,y,r);
+    var x=(u.m.position.x+FOGH)*FOGU,y=(u.m.position.z+FOGH)*FOGU,r=visionR(u)*FOGU,g=c.createRadialGradient(x,y,r*.55,x,y,r);
     g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,6.3);c.fill();
   });
   c.globalCompositeOperation='source-over';fogTex.needsUpdate=true;
@@ -841,14 +858,16 @@ function Start(){
   K=KITS[Game.pick]||KITS.joy;
   var others=Object.keys(KITS).filter(function(k){return KITS[k]!==K;});
   FK=KITS[others[Math.floor(Math.random()*others.length)]];
-  Cam.lock=true;Cam.rx=1.0;Cam.ry=0;Cam.dist=46;UI.pad(false);UI.stick(true);
+  Cam.lock=true;Cam.rx=1.0;Cam.ry=0;Cam.dist=50;UI.pad(false);UI.stick(true);
   var L=0xc9b27c,S=2*B+5;
   Spawn('box',{x:-B,y:.02,z:0,color:L,s:[5,.04,S]});
   Spawn('box',{x:B,y:.02,z:0,color:L,s:[5,.04,S]});
   Spawn('box',{x:0,y:.02,z:-B,color:L,s:[S,.04,5]});
   Spawn('box',{x:0,y:.02,z:B,color:L,s:[S,.04,5]});
-  Spawn('box',{x:0,y:.02,z:0,color:L,s:[Math.hypot(2*B,2*B),.04,5]}).rotation.y=Math.PI/4;
-  trees();
+  Spawn('box',{x:0,y:.012,z:0,color:0x3b83c4,s:[Math.hypot(2*B,2*B)+8,.03,9]}).rotation.y=-Math.PI/4;
+  Spawn('cyl',{x:-B,y:.014,z:B,color:0xa8c8f0,s:[26,.03,26]});Spawn('cyl',{x:B,y:.014,z:-B,color:0xf0b0a8,s:[26,.03,26]});
+  Spawn('box',{x:0,y:.02,z:0,color:L,s:[Math.hypot(2*B,2*B),.04,6]}).rotation.y=Math.PI/4;
+  grass();camps();
   LANES.forEach(function(l){[.2,.38].forEach(function(f){
     var a=pointAt(l,f),b=pointAt(l,1-f);
     unit(0,'tower',a[0],a[1]);unit(1,'tower',b[0],b[1]);
@@ -879,20 +898,21 @@ function Update(dt){
   separate();
   updateItems(dt);
   U=U.filter(function(u){if(u.rm){Kill(u.m);Kill(u.b);return false;}return true;});
+  respawn=respawn.filter(function(r){r.t-=dt;if(r.t<=0){unit(2,'neut',r.x,r.z);return false;}return true;});
   updateStars(dt);
   fxs=fxs.filter(function(f){f.t-=dt;if(f.t<=0){Kill(f.m);return false;}return true;});
   updateFog(dt);
   Cam.target.lerp(hero.m.position,.12);
   UI.score(kills[0],kills[1],Time.t);UI.gold(Math.floor(gold));
   UI.portrait({img:Game.icon,lvl:lvl,hp:hero.hp,hpMax:hero.max,mp:mana,mpMax:maxMana(),mr:1,xp:xp,xpNeed:lvl>=MAXL?0:xpNeed(lvl)});
-  UI.set(hero.dead?'Patay... buhay muli sa '+Math.ceil(hero.rt)+'s':hero.rc>0?'Nagre-recall... '+hero.rc.toFixed(1)+'s':'Tower '+towers(0)+' - '+towers(1)+'   Nexus '+Math.max(0,Math.round(bn.hp))+' - '+Math.max(0,Math.round(rn.hp)));
+  UI.set(hero.dead?'Patay... buhay muli sa '+Math.ceil(hero.rt)+'s':hero.rc>0?'Nagre-recall... '+hero.rc.toFixed(1)+'s':(hero.grass>=0&&hero.rev<=0?'NAKATAGO SA DAMO   ':'')+'Tower '+towers(0)+' - '+towers(1)+'   Nexus '+Math.max(0,Math.round(bn.hp))+' - '+Math.max(0,Math.round(rn.hp)));
 }
 }
 function loadMoba(){
   if(playing)stopPlay();
   objs.slice().forEach(function(o){scene.remove(o);});objs=[];count=0;sel=null;
   var body=mobaScript.toString().replace(/^[^{]*\{/,'').replace(/\}\s*$/,'');
-  make('ground',{name:'Mapa MOBA',s:[70,1,70],color:0x3f6b4a,script:body});
+  make('ground',{name:'Mapa MOBA',s:[110,1,110],color:0x7bb661,script:body});
   selectList=MOBA_SELECT;closeSelect();
   say('MOBA handa. Pindutin ang Play at pumili ng hero.');
 }

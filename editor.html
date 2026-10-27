@@ -42,11 +42,11 @@ textarea{height:calc(36vh - 70px);font-family:Consolas,Menlo,monospace;font-size
 #stick{display:none;position:absolute;left:22px;bottom:22px;width:132px;height:132px;border-radius:50%;background:radial-gradient(circle,#ffffff10 55%,#ffffff2a 100%);border:3px solid #ffffff44;touch-action:none}
 #knob{position:absolute;left:33px;top:33px;width:60px;height:60px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8fc9ff,#2b6fd6 60%,#1a3f8a);border:3px solid #cfe6ff99;box-shadow:0 2px 8px #0008;pointer-events:none}
 #skills{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-#skills .b,#iact .b{position:absolute;pointer-events:auto;border-radius:50%;padding:0;border:3px solid #e8c36a;background:radial-gradient(circle at 50% 35%,#3a2a4f,#150f24 75%);color:#fff;font-weight:700;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px #000a,inset 0 0 12px #7a5cff55;text-shadow:0 1px 3px #000}
-#skills .b .ic,#iact .b .ic{font-size:26px;line-height:1}
-#skills .b .cd,#iact .b .cd{position:absolute;inset:0;border-radius:50%;background:#000b;display:none;align-items:center;justify-content:center;font-size:20px}
-#skills .b.cool .cd,#iact .b.cool .cd{display:flex}
-#skills .b .lb,#iact .b .lb{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px;font-size:11px;white-space:nowrap;font-weight:600;color:#fff;text-shadow:0 1px 3px #000}
+#skills .b,#iact .b,#dspells .b{position:absolute;pointer-events:auto;border-radius:50%;padding:0;border:3px solid #e8c36a;background:radial-gradient(circle at 50% 35%,#3a2a4f,#150f24 75%);color:#fff;font-weight:700;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px #000a,inset 0 0 12px #7a5cff55;text-shadow:0 1px 3px #000}
+#skills .b .ic,#iact .b .ic,#dspells .b .ic{font-size:26px;line-height:1}
+#skills .b .cd,#iact .b .cd,#dspells .b .cd{position:absolute;inset:0;border-radius:50%;background:#000b;display:none;align-items:center;justify-content:center;font-size:20px}
+#skills .b.cool .cd,#iact .b.cool .cd,#dspells .b.cool .cd{display:flex}
+#skills .b .lb,#iact .b .lb,#dspells .b .lb{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px;font-size:11px;white-space:nowrap;font-weight:600;color:#fff;text-shadow:0 1px 3px #000}
 #skills .atk{width:96px;height:96px;right:18px;bottom:16px;border-color:#7fb8ff;background:radial-gradient(circle at 50% 35%,#2c5aa8,#0c1f4a 75%)}
 #skills .atk .ic{font-size:44px}
 #skills .s1{width:66px;height:66px;right:122px;bottom:20px}
@@ -132,6 +132,25 @@ textarea{height:calc(36vh - 70px);font-family:Consolas,Menlo,monospace;font-size
 .bar.mp{height:11px}.bar.mp u{background:linear-gradient(#5aa9ff,#1f55c9)}.bar.mp span{line-height:10px}
 .bar.xp{height:6px}.bar.xp u{background:linear-gradient(#ffd45a,#d98d00)}
 #skills .b.nm{filter:grayscale(.7) brightness(.65);border-color:#4a78c9}
+#hp{display:none!important}
+#dota{display:none;position:absolute;left:50%;bottom:6px;transform:translateX(-50%);transform-origin:50% 100%;z-index:3;align-items:flex-end;gap:6px;padding:5px 7px;background:linear-gradient(#1d1e25ee,#0b0c10f2);border:2px solid #6b5a33;border-radius:10px;box-shadow:0 2px 12px #000a;pointer-events:none}
+#dota .col{display:flex;flex-direction:column;gap:3px}
+#dota #hpic{width:58px;height:58px}
+#dota #hpbars{width:156px}
+#dota .bar.hp{height:17px}#dota .bar.hp span{font-size:11px;line-height:16px}
+#dota .bar.mp{height:14px}#dota .bar.mp span{font-size:10px;line-height:13px}
+#dspells{display:flex;gap:4px}
+#dspells .b{position:relative;width:34px;height:34px;pointer-events:auto;border-width:2px}
+#dspells .b .ic{font-size:17px}
+#dspells .b .lb{display:none}
+#dslots{display:grid;grid-template-columns:repeat(3,34px);grid-template-rows:repeat(2,34px);gap:3px;pointer-events:auto}
+.ds{position:relative;width:34px;height:34px;border:2px solid #3d3520;border-radius:6px;background:#08080c;overflow:hidden}
+.ds.on{border-color:#e8c36a}
+.ds img{width:100%;height:100%;object-fit:cover;display:block}
+.ds .cd{position:absolute;inset:0;background:#000b;display:none;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.ds.cool .cd{display:flex}
+.ds.act::after{content:"";position:absolute;right:2px;top:2px;width:6px;height:6px;border-radius:50%;background:#7fd0ff}
+@media (max-width:700px){#dota{transform:translateX(-50%) scale(.78)}}
 </style>
 </head>
 <body>
@@ -148,7 +167,7 @@ textarea{height:calc(36vh - 70px);font-family:Consolas,Menlo,monospace;font-size
 <div id="stage"><div id="log">I-tap ang object para piliin. I-drag para umikot, pinch para mag-zoom.</div>
 <div id="hudtxt"></div><button id="again">Ulit</button><button id="rotbtn" title="Ikot ng screen">⟳</button><div id="skills"></div><div id="stick"><div id="knob"></div></div>
 <div id="score"><span id="sc-b">0</span><span id="sc-t">00:00</span><span id="sc-r">0</span></div><canvas id="mini" width="96" height="96"></canvas>
-<div id="hp"><div id="hpic"><img id="hpimg" alt=""><b id="hplv">1</b></div><div id="hpbars"><i class="bar hp"><u id="bhp"></u><span id="thp"></span></i><i class="bar mp"><u id="bmp"></u><span id="tmp"></span></i><i class="bar xp"><u id="bxp"></u></i></div></div>
+<div id="dota"><div id="hpic"><img id="hpimg" alt=""><b id="hplv">1</b></div><div class="col"><div id="dspells"></div><div id="hpbars"><i class="bar hp"><u id="bhp"></u><span id="thp"></span></i><i class="bar mp"><u id="bmp"></u><span id="tmp"></span></i><i class="bar xp"><u id="bxp"></u></i></div></div><div id="dslots"></div></div>
 <div id="goldbar"><span id="gold">$ 300</span><button id="shopbtn">Shop</button></div><div id="islots"></div><div id="iact"></div><div id="toast"></div>
 <div id="shop"><div id="shophead"><h3>Tindahan</h3><span id="shopgold"></span><button id="shopx" class="alt">Isara</button></div><div id="shopbody"></div></div>
 <div id="select"><h2>Pumili ng Hero</h2><div id="cards"></div><button id="selgo" disabled>Simulan</button></div>
@@ -261,15 +280,17 @@ onshop:function(fn){UI.shopFn=fn;},
 portrait:function(o){
 if(UI._pi!==o.img){UI._pi=o.img;if(o.img)$('hpimg').src=o.img;else $('hpimg').removeAttribute('src');}
 var k=o.lvl+'|'+Math.ceil(o.hp)+'|'+o.hpMax+'|'+Math.floor(o.mp)+'|'+o.mpMax+'|'+Math.floor(o.xp)+'|'+o.xpNeed;if(UI._p===k)return;UI._p=k;
-$('hp').style.display='flex';$('hplv').textContent=o.lvl;
+$('dota').style.display='flex';$('hplv').textContent=o.lvl;
 $('bhp').style.width=Math.max(0,Math.min(100,o.hp/o.hpMax*100))+'%';$('thp').textContent=Math.ceil(o.hp)+'/'+o.hpMax;
-$('bmp').style.width=Math.max(0,Math.min(100,o.mp/o.mpMax*100))+'%';$('tmp').textContent=Math.floor(o.mp)+'/'+o.mpMax;
+$('bmp').style.width=Math.max(0,Math.min(100,o.mp/o.mpMax*100))+'%';$('tmp').textContent=Math.floor(o.mp)+'/'+o.mpMax+(o.mr?'  +'+o.mr.toFixed(1):'');
 $('bxp').style.width=(o.xpNeed>0?Math.min(100,o.xp/o.xpNeed*100):100)+'%';},
-slots:function(arr){var e=$('islots');e.style.display=arr.length?'flex':'none';e.innerHTML=arr.map(function(a){return '<div class="is"><img src="'+a.icon+'" alt="">'+esc(a.text)+'</div>';}).join('');},
+slots:function(arr){var h='';for(var i=0;i<6;i++){var a=arr[i];h+=a?'<div class="ds on'+(a.act?' act':'')+'" data-i="'+i+'" title="'+esc(a.text)+'"><img src="'+a.icon+'" alt=""><span class="cd"></span></div>':'<div class="ds"></div>';}$('dslots').innerHTML=h;UI._sc={};},
+slotCd:function(i,t){if(UI._sc[i]===t)return;UI._sc[i]=t;var e=$('dslots').children[i];if(!e)return;var cd=e.querySelector('.cd');if(!cd)return;if(t>0){cd.textContent=t;e.classList.add('cool');}else e.classList.remove('cool');},
+onslot:function(fn){UI.slotFn=fn;},
 shopShow:function(html,cb){UI.shopCb=cb;$('shop').classList.add('on');$('shopbody').innerHTML=html;},
 shopHide:function(){$('shop').classList.remove('on');},
 toast:function(m){var t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(UI.tt);UI.tt=setTimeout(function(){t.style.display='none';},2200);},
-clear:function(){UI.n=0;UI._t=UI._s=UI._g=UI._p=UI._pi=null;$('hp').style.display='none';miniFn=null;UI.shopFn=null;$('hudtxt').textContent='';$('skills').innerHTML='';$('iact').innerHTML='';$('islots').innerHTML='';$('islots').style.display='none';$('goldbar').style.display='none';$('shop').classList.remove('on');$('toast').style.display='none';$('score').style.display='none';$('mini').style.display='none';}};
+clear:function(){UI.n=0;UI._t=UI._s=UI._g=UI._p=UI._pi=null;UI._sc={};$('dota').style.display='none';$('dslots').innerHTML='';$('dspells').innerHTML='';miniFn=null;UI.shopFn=null;$('hudtxt').textContent='';$('skills').innerHTML='';$('iact').innerHTML='';$('islots').innerHTML='';$('islots').style.display='none';$('goldbar').style.display='none';$('shop').classList.remove('on');$('toast').style.display='none';$('score').style.display='none';$('mini').style.display='none';}};
 function find(n){return objs.filter(function(o){return o.userData.name===n;})[0];}
 var bh=new T.BoxHelper(new T.Object3D(),0xffb703);bh.visible=false;scene.add(bh);
 var tgt=new T.Vector3(0,1,0),ry=.7,rx=.5,dist=9;
@@ -616,7 +637,7 @@ function bloodshed(){
 }
 function updateItems(dt){
   if(!hero)return;
-  Object.keys(iBtn).forEach(function(id){icd[id]=Math.max(0,(icd[id]||0)-dt);UI.label(iBtn[id],icd[id]>0?Math.ceil(icd[id]):0);});
+  owned.forEach(function(it,i){if(!it.act)return;icd[it.id]=Math.max(0,(icd[it.id]||0)-dt);UI.slotCd(i,icd[it.id]>0?Math.ceil(icd[it.id]):0);});
   zones=zones.filter(function(zn){
     zn.t+=dt;
     if(zn.t<1.5){zn.m.scale.x=zn.m.scale.z=14*(.4+.6*zn.t/1.5);return true;}
@@ -661,8 +682,8 @@ function buy(id){
   if(gold<it.cost){UI.toast('Kulang ang gold');return;}
   gold-=it.cost;owned.push(it);
   var ic=Game.icons||{};
-  if(it.act){iBtn[it.id]=UI.btn('',function(){useItem(it);},{box:'iact',slot:'ia',img:ic[it.id],icon:it.act.text,text:it.act.text});icd[it.id]=0;}
-  UI.slots(owned.map(function(i){return {icon:ic[i.id]||'',text:i.name};}));
+  if(it.act)icd[it.id]=0;
+  UI.slots(owned.map(function(i){return {icon:ic[i.id]||'',text:i.name,act:!!i.act};}));
   UI.toast('Nabili: '+it.name);
   UI.shopShow(shopHtml(),buy);UI.gold(Math.floor(gold));
 }
@@ -839,11 +860,12 @@ function Start(){
   mark=Spawn('cyl',{color:0xffffff,s:[.6,.05,.6]});mark.visible=false;
   bA=UI.btn('',attackBtn,{slot:'atk',icon:'⚔'});
   K.skills.forEach(function(s,i){sb.push(UI.btn('',function(){cast(i);},{slot:'s'+(i+1),icon:s.icon,text:s.text+' '+s.mp}));});
-  bR=UI.btn('',recall,{slot:'sp sp1',icon:'⌂',text:'Recall'});
-  bH=UI.btn('',heal,{slot:'sp sp2',icon:'✚',text:'Heal'});
+  bR=UI.btn('',recall,{box:'dspells',slot:'ds',icon:'⌂',text:'Recall'});
+  bH=UI.btn('',heal,{box:'dspells',slot:'ds',icon:'✚',text:'Heal'});
   UI.mini(drawMini);
   initFog();
   gold=Game.startGold||300;UI.onshop(openShop);UI.gold(gold);
+  UI.slots([]);UI.onslot(function(i){var it=owned[i];if(!it)return;if(it.act)useItem(it);else UI.toast(it.name+': '+it.d);});
   mana=maxMana();if(Game.startXp)addXp(Game.startXp);
 }
 function Update(dt){
@@ -862,7 +884,7 @@ function Update(dt){
   updateFog(dt);
   Cam.target.lerp(hero.m.position,.12);
   UI.score(kills[0],kills[1],Time.t);UI.gold(Math.floor(gold));
-  UI.portrait({img:Game.icon,lvl:lvl,hp:hero.hp,hpMax:hero.max,mp:mana,mpMax:maxMana(),xp:xp,xpNeed:lvl>=MAXL?0:xpNeed(lvl)});
+  UI.portrait({img:Game.icon,lvl:lvl,hp:hero.hp,hpMax:hero.max,mp:mana,mpMax:maxMana(),mr:1,xp:xp,xpNeed:lvl>=MAXL?0:xpNeed(lvl)});
   UI.set(hero.dead?'Patay... buhay muli sa '+Math.ceil(hero.rt)+'s':hero.rc>0?'Nagre-recall... '+hero.rc.toFixed(1)+'s':'Tower '+towers(0)+' - '+towers(1)+'   Nexus '+Math.max(0,Math.round(bn.hp))+' - '+Math.max(0,Math.round(rn.hp)));
 }
 }
@@ -908,6 +930,7 @@ b.addEventListener('pointerdown',function(e){e.preventDefault();keys[k]=true;});
 
 try{Game.icons=JSON.parse(document.getElementById('itemicons').textContent);}catch(e){Game.icons={};}
 $('shopbtn').addEventListener('click',function(){if(UI.shopFn)UI.shopFn();});
+$('dslots').addEventListener('pointerdown',function(e){var b=e.target.closest('[data-i]');if(b&&UI.slotFn){e.preventDefault();UI.slotFn(+b.dataset.i);}});
 $('shopx').addEventListener('click',function(){UI.shopHide();});
 $('shopbody').addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(b&&UI.shopCb)UI.shopCb(b.dataset.id);});
 (function(){var st=$('stick'),kn=$('knob'),act=null,R=44;

@@ -31,7 +31,7 @@ Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, bumili ng ite
 - Joystick (kaliwa-baba) o tap sa lupa para maglakad.
 - Kanan-baba: malaking button ang atake, at sa paligid nito ang mga skill. Sa ilalim, **Recall** at **Heal**.
 - **Fog of war**: madilim ang lugar na hindi pa napupuntahan, at nakatago ang mga kalaban na malayo sa mga kakampi mo. Nasa kaliwa-taas ang minimap na may ilog, damo, lane, at camp.
-- **Mapa na hango sa Dota**: malawak na parisukat na mapa. Nasa kaliwa-baba ang base ng Asul at kanan-taas ang sa Pula. May tatlong lane (taas, gitna, baba) at diagonal na ilog mula kaliwa-taas hanggang kanan-baba. Walang puno, damo lang.
+- **Mapa na hango sa Dota**: malawak na parisukat na mapa. Nasa kaliwa-baba ang base ng Asul at kanan-taas ang sa Pula. May tatlong lane (taas, gitna, baba) at diagonal na ilog mula kaliwa-taas hanggang kanan-baba. Walang puno, damo lang sa panig natin. **Kulay-abong batong tile** ang sahig ng kabilang panig (panig ng kalaban), at **kulay-kahel na tile** ang mga lane doon.
 - **Damo**: pumasok sa madilim na berdeng damo para magtago. Hindi ka makikita o matatarget ng mga kalaban, tower, at kawal, maliban kung nasa parehong damo rin sila, o kapag kakaatake o kaka-skill mo lang (1.5 segundo). Naglalabo ang hero mo kapag nakatago.
 - **Jungle camp**: may 12 camp (dilaw na tatsulok sa minimap), tig-2 neutral. Lumalaban lang sila kapag may lumapit, at bumabalik sila sa pwesto nila. Bawat napatay: +25 gold, +30 XP. Bumabalik ang camp pagkalipas ng 60 segundo.
 - May banggaan ang mga tower, Nexus, at mga unit.

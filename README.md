@@ -33,7 +33,7 @@ Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, bumili ng ite
 - **Fog of war**: madilim ang lugar na hindi pa napupuntahan, at nakatago ang mga kalaban na malayo sa mga kakampi mo. Nasa kaliwa-taas ang minimap na may ilog, damo, lane, at camp.
 - **Mapa na hango sa Dota**: malawak na parisukat na mapa. Nasa kaliwa-baba ang base ng Asul at kanan-taas ang sa Pula. May tatlong lane (taas, gitna, baba) at diagonal na ilog mula kaliwa-taas hanggang kanan-baba. Sa panig natin, **damo** ang sahig at **kayumangging batong tile** ang mga lane. **Kulay-abong batong tile** ang sahig ng kabilang panig (panig ng kalaban), at **kulay-kahel na tile** ang mga lane doon.
 - **Damo**: pumasok sa madilim na berdeng damo para magtago. Hindi ka makikita o matatarget ng mga kalaban, tower, at kawal, maliban kung nasa parehong damo rin sila, o kapag kakaatake o kaka-skill mo lang (1.5 segundo). Naglalabo ang hero mo kapag nakatago.
-- **Jungle camp**: may 12 camp (dilaw na tatsulok sa minimap), tig-2 neutral. Lumalaban lang sila kapag may lumapit, at bumabalik sila sa pwesto nila. Bawat napatay: +25 gold, +30 XP. Bumabalik ang camp pagkalipas ng 60 segundo.
+- **Jungle camp**: may 12 camp (dilaw na tatsulok sa minimap), tig-2 neutral. May **sanctuary** (guho ng bato) sa likod ng bawat camp, na may banggaan. Lumalaban lang sila kapag may lumapit, at bumabalik sila sa pwesto nila. Bawat napatay: +25 gold, +30 XP. Bumabalik ang camp pagkalipas ng 60 segundo.
 - May banggaan ang mga tower, Nexus, at mga unit.
 - Pindutin ang **Ulit** (kanan-taas) para bumalik sa pagpili ng hero.
 - Pinch (o scroll) para mag-zoom ng camera. Katamtaman ang taas ng camera sa simula (hindi masyadong mataas).

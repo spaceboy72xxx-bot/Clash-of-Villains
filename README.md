@@ -8,7 +8,7 @@ Laro sa browser na JavaScript ang code (Three.js). Pumili ng hero, bumili ng ite
 - **Behemoth** (Bruiser): Charge at Roar
 - **Minotaur** (Assassin): Dive at Gale
 - **Gunner** (Marksman): Cannon at Overdrive
-- **Valkyrie** (Long-range): Burst at Volley. Umaatake mula sa malayo (10 yunit) gamit ang kumikinang na projectile.
+- **Valkyrie** (Long-range): Burst at Volley. Umaatake mula sa malayo (10 yunit) gamit ang 3D na projectile na apoy na may buntot, at may sabog at apoy sa lupa kapag tumama.
 
 ## Mana, level, at gold
 - **Mana**: gumagamit ng mana ang bawat skill (15 hanggang 30). Bumabalik ang mana ng **1 bawat segundo**, kaya piliin nang mabuti ang mga skill. Nagsisimula sa 60 mana at tumataas ng 10 sa bawat level.
